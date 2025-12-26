@@ -1,5 +1,7 @@
 "use strict";
 
+//const { MongoClientBulkWriteCursorError } = require("mongodb");
+
 const form = document.querySelector(".form");
 const containerWorkouts = document.querySelector(".workouts");
 const inputType = document.querySelector(".form__input--type");
@@ -19,13 +21,27 @@ if (navigator.geolocation) {
 
             const map = L.map('map').setView(coords, 14);
 
+            console.log(L.popup)
+
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            L.marker(coords).addTo(map)
-                .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-                .openPopup();
+            map.on("click", function (mapEvent) {
+                console.log(mapEvent);
+
+                const { lat, lng } = mapEvent.latlng;
+
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup(L.popup({
+                        maxWidth: 200,
+                        minWidth: 100,
+                        autoClose: false,
+                        closeOnClick: false,
+                        className: 'running-popup'
+                    }))
+                    .openPopup().setPopupContent("Треня");
+            })
         },
         function () {
             alert(`Невозможно получить ваше местоположение`);
