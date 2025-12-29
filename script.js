@@ -9,6 +9,7 @@ const inputDistance = document.querySelector(".form__input--distance");
 const inputDuration = document.querySelector(".form__input--duration");
 const inputCadence = document.querySelector(".form__input--temp");
 const inputElevation = document.querySelector(".form__input--climb");
+let map, mapEvent;
 
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -19,32 +20,41 @@ if (navigator.geolocation) {
 
             const coords = [latitude, longitude];
 
-            const map = L.map('map').setView(coords, 14);
+            map = L.map('map').setView(coords, 14);
 
-            console.log(L.popup)
+            console.log(L)
 
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            map.on("click", function (mapEvent) {
+            map.on("click", function (event) {
                 console.log(mapEvent);
-
-                const { lat, lng } = mapEvent.latlng;
-
-                L.marker([lat, lng]).addTo(map)
-                    .bindPopup(L.popup({
-                        maxWidth: 200,
-                        minWidth: 100,
-                        autoClose: false,
-                        closeOnClick: false,
-                        className: 'running-popup'
-                    }))
-                    .openPopup().setPopupContent("Треня");
+                mapEvent = event;
+                form.classList.remove('hidden');
+                inputDistance.focus();
             })
         },
         function () {
             alert(`Невозможно получить ваше местоположение`);
         }
     );
-}
+};
+
+form.addEventListener("submit", function () {
+
+    event.preventDefault();
+
+    //отображение маркера
+    const { lat, lng } = mapEvent.latlng;
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(L.popup({
+            maxWidth: 200,
+            minWidth: 100,
+            autoClose: false,
+            closeOnClick: false,
+            className: 'running-popup'
+        }))
+        .openPopup().setPopupContent("Треня");
+})

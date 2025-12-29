@@ -1,0 +1,35 @@
+[33mcommit 66cf4a1f93b68e0677e7b0c11b9d6054093f0a93[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: monkeymic <r3alslon@ya.ru>
+Date:   Thu Dec 25 17:08:38 2025 +0300
+
+    add map Leaflet service in html and script js
+
+[33mcommit f03831679d1a8f4df012b5301594c087456d8a0c[m
+Author: monkeymic <r3alslon@ya.ru>
+Date:   Thu Dec 25 15:42:56 2025 +0300
+
+    add function for navigation in script.js
+
+[33mcommit 317164dd6722072006463e8d5ad22b7ab124520c[m
+Author: monkeymic <r3alslon@ya.ru>
+Date:   Thu Dec 25 11:00:02 2025 +0300
+
+    add style in css file
+
+[33mcommit 94e358235dfd0bd3a727e8145e51e674048a78e0[m
+Author: monkeymic <r3alslon@ya.ru>
+Date:   Wed Dec 24 15:37:15 2025 +0300
+
+    create html index-file and push this content
+
+[33mcommit ecbd13840079bd2f5b9bbd49eacd9ca5550a55a6[m
+Author: monkeymic <r3alslon@ya.ru>
+Date:   Wed Dec 24 13:33:52 2025 +0300
+
+    add variables forms in script.js
+
+[33mcommit a3fbca7c9df1613f004e978a6fc70e156e49b9c1[m
+Author: monkeymic <r3alslon@ya.ru>
+Date:   Wed Dec 24 11:34:39 2025 +0300
+
+    add files
