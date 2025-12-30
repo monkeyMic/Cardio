@@ -9,60 +9,85 @@ const inputDistance = document.querySelector(".form__input--distance");
 const inputDuration = document.querySelector(".form__input--duration");
 const inputTemp = document.querySelector(".form__input--temp");
 const inputClimb = document.querySelector(".form__input--climb");
-let map, mapEvent;
 
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-        function (position) {
-            const { latitude } = position.coords;
-            const { longitude } = position.coords;
-            console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
+class App {
 
-            const coords = [latitude, longitude];
+    #map;
+    #mapEvent;
 
-            map = L.map('map').setView(coords, 14);
+    constructor() {
+        this._getPosition();
 
-            console.log(L)
+        form.addEventListener("submit", this._newWorkout.bind(this));
 
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+        inputType.addEventListener("change", this._toggleClimbField);
+    };
 
-            map.on("click", function (event) {
-                console.log(mapEvent);
-                mapEvent = event;
-                form.classList.remove('hidden');
-                inputDistance.focus();
-            })
-        },
-        function () {
-            alert(`Невозможно получить ваше местоположение`);
-        }
-    );
-};
+    _getPosition() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                this._loadMap.bind(this),
+                function () {
+                    alert(`Невозможно получить ваше местоположение`);
+                }
+            );
+        };
+    };
 
-form.addEventListener("submit", function () {
+    _loadMap(position) {
+        const { latitude } = position.coords;
+        const { longitude } = position.coords;
+        console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
 
-    event.preventDefault();
+        const coords = [latitude, longitude];
 
-    //очистка полей ввода данных
-    inputDistance.value = inputDuration.value = inputTemp.value = inputClimb.value = "";
+        this.#map = L.map('map').setView(coords, 14);
 
-    //отображение маркера
-    const { lat, lng } = mapEvent.latlng;
+        console.log(L)
 
-    L.marker([lat, lng]).addTo(map)
-        .bindPopup(L.popup({
-            maxWidth: 200,
-            minWidth: 100,
-            autoClose: false,
-            closeOnClick: false,
-            className: 'running-popup'
-        }))
-        .openPopup().setPopupContent("Треня");
-});
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(this.#map);
 
-inputType.addEventListener("change", function () {
-    inputClimb.closest(".form__row").classList.toggle("form__row--hidden");
-    inputTemp.closest(".form__row").classList.toggle("form__row--hidden");
-});
+        this.#map.on('click', this._showForm.bind(this));
+
+    };
+
+    _showForm(e) {
+        this.#mapEvent = e;
+        this.#mapEvent = e;
+        form.classList.remove('hidden');
+        inputDistance.focus();
+    }
+
+    _toggleClimbField() {
+        inputClimb.closest(".form__row").classList.toggle("form__row--hidden");
+        inputTemp.closest(".form__row").classList.toggle("form__row--hidden");
+    };
+
+    _newWorkout(e) {
+        e.preventDefault();
+
+        //очистка полей ввода данных
+        inputDistance.value =
+            inputDuration.value =
+            inputTemp.value =
+            inputClimb.value = "";
+
+        //отображение маркера
+        const { lat, lng } = this.#mapEvent.latlng;
+
+        L.marker([lat, lng]).addTo(this.#map)
+            .bindPopup(L.popup({
+                maxWidth: 200,
+                minWidth: 100,
+                autoClose: false,
+                closeOnClick: false,
+                className: 'running-popup'
+            }))
+            .openPopup().setPopupContent("Треня");
+    }
+}
+
+const app = new App();
+
