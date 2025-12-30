@@ -7,8 +7,8 @@ const containerWorkouts = document.querySelector(".workouts");
 const inputType = document.querySelector(".form__input--type");
 const inputDistance = document.querySelector(".form__input--distance");
 const inputDuration = document.querySelector(".form__input--duration");
-const inputCadence = document.querySelector(".form__input--temp");
-const inputElevation = document.querySelector(".form__input--climb");
+const inputTemp = document.querySelector(".form__input--temp");
+const inputClimb = document.querySelector(".form__input--climb");
 let map, mapEvent;
 
 if (navigator.geolocation) {
@@ -45,6 +45,9 @@ form.addEventListener("submit", function () {
 
     event.preventDefault();
 
+    //очистка полей ввода данных
+    inputDistance.value = inputDuration.value = inputTemp.value = inputClimb.value = "";
+
     //отображение маркера
     const { lat, lng } = mapEvent.latlng;
 
@@ -57,4 +60,9 @@ form.addEventListener("submit", function () {
             className: 'running-popup'
         }))
         .openPopup().setPopupContent("Треня");
-})
+});
+
+inputType.addEventListener("change", function () {
+    inputClimb.closest(".form__row").classList.toggle("form__row--hidden");
+    inputTemp.closest(".form__row").classList.toggle("form__row--hidden");
+});
