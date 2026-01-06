@@ -71,7 +71,7 @@ a:visited {
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem 2.5rem;
     height: 9.25rem;
-    transition: all 0/5s, transform 1ms;
+    transition: all 0.5s, transform 1ms;
 }
 
 .form.hidden {
