@@ -109,13 +109,15 @@ class App {
 
     _newWorkout(e) {
 
-        const areNumbers = function (...numbers) {
-            numbers.every(num => !Number.isFinite(num));
+        const areNumbers = (...numbers) => {
+            return numbers.every(num => Number.isFinite(num));
         }
 
         const areNumbersPositive = (...numbers) => {
-            numbers.every(num => num > 0);
+            return numbers.every(num => num > 0);
         }
+
+
 
         e.preventDefault();
         //получить данные из формы
@@ -130,7 +132,7 @@ class App {
             const temp = +inputTemp.value;
             //проверить, являются ли данные валидными
             if (!areNumbers(distance, duration, temp) || !areNumbersPositive(distance, duration, temp)) {
-                return alert("Введите положительное число");
+                return console.log("Enter the valid value!");
             }
         }
 
