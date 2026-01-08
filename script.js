@@ -24,6 +24,8 @@ class Workout {
 
 class Running extends Workout {
 
+    type = 'running';
+
     constructor(coords, distance, duration, temp) {
         super(coords, distance, duration);
         this.temp = temp;
@@ -36,6 +38,8 @@ class Running extends Workout {
 }
 
 class Cycling extends Workout {
+
+    type = 'cycling';
 
     constructor(coords, distance, duration, climb) {
         super(coords, distance, duration);
@@ -56,8 +60,10 @@ class App {
 
     #map;
     #mapEvent;
+    #workouts = [];
 
     constructor() {
+
         this._getPosition();
 
         form.addEventListener("submit", this._newWorkout.bind(this));
@@ -120,6 +126,10 @@ class App {
 
 
         e.preventDefault();
+
+        const { lat, lng } = this.#mapEvent.latlng;
+        let workout;
+
         //получить данные из формы
 
         const type = inputType.value;
@@ -134,6 +144,10 @@ class App {
             if (!areNumbers(distance, duration, temp) || !areNumbersPositive(distance, duration, temp)) {
                 return console.log("Enter the valid value!");
             }
+
+            workout = new Running([lat, lng], distance, duration, temp);
+            console.log(workout);
+
         }
 
         //елси тренировка является велотренировкой, то создать объект Cycling
@@ -144,23 +158,17 @@ class App {
             if (!areNumbers(distance, duration, climb) || !areNumbersPositive(distance, duration)) {
                 return alert("Введите положительное число");
             }
+
+            workout = new Cycling([lat, lng], distance, duration, climb);
+            console.log(workout);
+
         }
 
         //добавить новый объект в массив тренировок
+        this.#workouts.push(workout);
 
         //отобразить тренирвку на карте
-
-        const { lat, lng } = this.#mapEvent.latlng;
-
-        L.marker([lat, lng]).addTo(this.#map)
-            .bindPopup(L.popup({
-                maxWidth: 200,
-                minWidth: 100,
-                autoClose: false,
-                closeOnClick: false,
-                className: 'running-popup'
-            }))
-            .openPopup().setPopupContent("Треня");
+        this.displayWokout(workout);
 
         //отобразить тренировку в списке
 
@@ -169,6 +177,18 @@ class App {
             inputDuration.value =
             inputTemp.value =
             inputClimb.value = "";
+    }
+
+    displayWokout(workout) {
+        L.marker(workout.coords).addTo(this.#map)
+            .bindPopup(L.popup({
+                maxWidth: 200,
+                minWidth: 100,
+                autoClose: false,
+                closeOnClick: false,
+                className: `${workout.type}-popup`,
+            }))
+            .openPopup().setPopupContent("Треня");
     }
 }
 
