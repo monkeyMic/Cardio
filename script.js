@@ -20,6 +20,12 @@ class Workout {
         this.distance = distance; //km
         this.duration = duration; //min
     }
+
+    _setDescription() {
+        this.type = "running"
+            ? (this.description = `Пробежка ${new Intl.DateTimeFormat("ru-Ru").format(this.date)}`)
+            : (`Велотренировка ${new Intl.DateTimeFormat("ru-Ru").format(this.date)}`)
+    }
 }
 
 class Running extends Workout {
@@ -30,6 +36,7 @@ class Running extends Workout {
         super(coords, distance, duration);
         this.temp = temp;
         this.calculatePace();
+        this._setDescription();
     }
 
     calculatePace() {
@@ -45,16 +52,13 @@ class Cycling extends Workout {
         super(coords, distance, duration);
         this.climb = climb;
         this.calculateSpeed();
+        this._setDescription();
     }
 
     calculateSpeed() {
         this.speed = this.distance / this.duration / 60;
     }
 }
-
-const running = new Running([60, 37], 7, 30, 25);
-const cycling = new Cycling([50, 65], 18, 33, 25);
-console.log(running, cycling);
 
 class App {
 
@@ -91,8 +95,6 @@ class App {
 
         this.#map = L.map('map').setView(coords, 14);
 
-        console.log(L)
-
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.#map);
@@ -102,7 +104,6 @@ class App {
     };
 
     _showForm(e) {
-        this.#mapEvent = e;
         this.#mapEvent = e;
         form.classList.remove('hidden');
         inputDistance.focus();
@@ -168,9 +169,10 @@ class App {
         this.#workouts.push(workout);
 
         //отобразить тренирвку на карте
-        this.displayWokout(workout);
+        this._displayWokout(workout);
 
         //отобразить тренировку в списке
+        this._displayWorkoutOnSidebar(workout);
 
         //спрятать форму и очистить поля ввода данных
         inputDistance.value =
@@ -179,7 +181,7 @@ class App {
             inputClimb.value = "";
     }
 
-    displayWokout(workout) {
+    _displayWokout(workout) {
         L.marker(workout.coords).addTo(this.#map)
             .bindPopup(L.popup({
                 maxWidth: 200,
@@ -189,6 +191,56 @@ class App {
                 className: `${workout.type}-popup`,
             }))
             .openPopup().setPopupContent("Треня");
+    }
+
+    _displayWorkoutOnSidebar(workout) {
+        let html = `
+        <li class="workout workout--${workout.type}" data-id="${workout.id}">
+            <h2 class="workout__title">${workout.description}</h2>
+            <div class="workout__details">
+                <span class="workout__icon">${workout.type === "running" ? '🏃' : '🚵‍♂️'}</span>
+                <span class="workout__value">${workout.distance}</span>
+                <span class="workout__icon">км</span>
+            </div>
+            <div class="workout__details">
+                <span class="workout__icon">⏱</span>
+                <span class="workout__value">${workout.duration}</span>
+                <span class="workout__icon">мин</span>
+            </div>
+        </li>
+        `
+
+        if (workout.type === "running") {
+            html += `
+                <div class="workout__details">
+                    <span class="workout__icon>📏⏱</span>
+                    <span class="workout__value">${workout.pace.toFixed(2)}</span>
+                    <span class="workout__unit">мин/км</span>
+                </div>    
+                <div class="workout__details">
+                    <span class="workout__icon>👟⏱</span>
+                    <span class="workout__value">${workout.temp}</span>
+                    <span class="workout__unit">шаг/мин</span>
+                </div>
+            `
+        }
+        if (workout.type === "cycling") {
+            html += `
+                <div class="workout__details">
+                    <span class="workout__icon>📏⏱</span>
+                    <span class="workout__value">${workout.speed.toFixed(2)}</span>
+                    <span class="workout__unit">км/ч</span>
+                </div>    
+                <div class="workout__details">
+                    <span class="workout__icon>🏔</span>
+                    <span class="workout__value">${workout.climb}</span>
+                    <span class="workout__unit">м</span>
+                </div>
+            </li>
+            `;
+        }
+
+        form.insertAdjacentHTML("afterend", html);
     }
 }
 
